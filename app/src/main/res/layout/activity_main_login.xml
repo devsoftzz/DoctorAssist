@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorPrimaryTrans"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="48dp">
+
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        android:paddingBottom="20dp"
+        android:src="@drawable/ic_login" />
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/phoneout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:textColorHint="#FFF">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/phone_number"
+            android:hint="Phone Number"
+            android:inputType="numberDecimal"
+            android:textColor="#FFFFFF" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:id="@+id/codeout"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:textColorHint="#FFF">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/verification_code"
+            android:hint="Enter Code"
+            android:inputType="textEmailAddress"
+            android:textColor="#FFFFFF" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/sendcode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@null"
+        android:text="Send code"
+        android:visibility="visible"
+        android:textColor="#FFF"
+        android:textSize="30sp" />
+
+
+    <Button
+        android:id="@+id/enter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@null"
+        android:text="Enter"
+        android:visibility="gone"
+        android:textColor="#FFF"
+        android:textSize="30sp" />
+
+</LinearLayout>
