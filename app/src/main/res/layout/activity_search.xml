@@ -8,13 +8,11 @@
     tools:context=".SearchActivity"
     android:id="@+id/allsize">
 
-
         <fragment
             android:id="@+id/map"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:name="com.google.android.gms.maps.SupportMapFragment">
-        </fragment>
+            android:name="com.google.android.gms.maps.SupportMapFragment"/>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/bottom_sheet"

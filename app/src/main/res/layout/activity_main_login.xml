@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
         android:paddingBottom="20dp"
-        android:src="@drawable/ic_login" />
+        android:src="@drawable/ic_user" />
 
 
     <com.google.android.material.textfield.TextInputLayout

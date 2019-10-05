@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.devsoftzz.doctorassist.MainActivity;
 import com.devsoftzz.doctorassist.R;
+import com.devsoftzz.doctorassist.UserDetailsActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskExecutors;
@@ -117,7 +118,7 @@ public class MainLogin extends AppCompatActivity {
         signInWithCredential(credential);
     }
 
-    private void signInWithCredential(PhoneAuthCredential credential) {
+    private void signInWithCredential(final PhoneAuthCredential credential) {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -139,26 +140,12 @@ public class MainLogin extends AppCompatActivity {
                                     }
                                     else
                                     {
-                                        HashMap<String,Object> mapdata = new HashMap<>();
-                                        mapdata.put("id",userid);
-                                        mapdata.put("name","hemang");
-                                        ref.setValue(mapdata).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
 
-                                                if(task.isSuccessful())
-                                                {
-                                                    Intent it= new Intent(MainLogin.this,MainActivity.class);
-                                                    it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                    startActivity(it);
-                                                    finish();
-                                                }
-                                                else
-                                                {
-                                                    Toast.makeText(MainLogin.this,"Verification Unsuccessful",Toast.LENGTH_LONG).show();
-                                                }
-                                            }
-                                        });
+
+                                        Intent intent = new Intent(MainLogin.this, UserDetailsActivity.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        startActivity(intent);
+
                                     }
                                 }
 
