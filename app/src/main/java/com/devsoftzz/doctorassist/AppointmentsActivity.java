@@ -10,6 +10,7 @@ import com.devsoftzz.doctorassist.Database.DatabaseHandler;
 import com.devsoftzz.doctorassist.Models.Adapter_Appoinment;
 import com.devsoftzz.doctorassist.Models.AppointmentPojo;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +29,11 @@ public class AppointmentsActivity extends AppCompatActivity {
 
         db= new DatabaseHandler(this);
         List<AppointmentPojo> arrayList = new ArrayList<>();
-        arrayList = db.getAllRecords();
+        try {
+            arrayList = db.getAllRecords();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
 
         recycleLayout = findViewById(R.id.appointment_recycler);

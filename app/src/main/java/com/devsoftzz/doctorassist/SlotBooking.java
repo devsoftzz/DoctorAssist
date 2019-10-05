@@ -69,7 +69,7 @@ public class SlotBooking extends AppCompatActivity implements View.OnClickListen
                         }, mYear, mMonth, mDay);
 
 
-                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis()- (1000 * 60 * 60 * 24));
                 datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis()+ (1000 * 60 * 60 * 24 * 15));
                 datePickerDialog.show();
 
@@ -117,7 +117,6 @@ public class SlotBooking extends AppCompatActivity implements View.OnClickListen
         }
 
     }
-
 
 
     void SendToDatabase(final String time)
