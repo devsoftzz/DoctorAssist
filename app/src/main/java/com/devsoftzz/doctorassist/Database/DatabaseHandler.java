@@ -5,11 +5,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import com.devsoftzz.doctorassist.Models.AppointmentPojo;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
 
 public class DatabaseHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
@@ -19,9 +24,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_NAME = "name";
     private static final String KEY_TIME = "time";
     private static final String KEY_DATE = "date";
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy'|'HH_mm");
+    Context cc;
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.cc= context;
     }
 
     // Creating Tables
@@ -52,7 +60,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public List<AppointmentPojo> getAllRecords() {
+    public List<AppointmentPojo> getAllRecords() throws ParseException {
         List<AppointmentPojo> recordList = new ArrayList<AppointmentPojo>();
 
         String selectQuery = "SELECT  * FROM " + TABLE_APPOINMENT;
@@ -69,17 +77,33 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 appoinmentPojo.setHospital(cursor.getString(1));
                 appoinmentPojo.setDate(cursor.getString(2));
                 appoinmentPojo.setTime(cursor.getString(3));
-                recordList.add(appoinmentPojo);
+
+
+                Toast.makeText(cc,cursor.getString(3),Toast.LENGTH_LONG).show();
+                Date d2= sdf.parse(cursor.getString(2)+"|"+cursor.getString(3));
+
+                   if(d2.before(new Date()))
+                   {
+                       deleteRecord(appoinmentPojo);
+                   }
+                   else
+                   {
+                       recordList.add(appoinmentPojo);
+                   }
+
+
+
+
             } while (cursor.moveToNext());
         }
         return recordList;
     }
 
-    public void deleteRecord(int i){
+    public void deleteRecord(AppointmentPojo pj){
         SQLiteDatabase db = this.getWritableDatabase();
-        String[] args = new String[]{""+i};
-        AppointmentPojo a1 = getAppoinment(i);
-        db.delete(TABLE_APPOINMENT,KEY_ID+"=?",args);
+        db.delete(TABLE_APPOINMENT, KEY_ID + " = ?",
+                new String[] { String.valueOf(pj.get_id())});
+        db.close();
     }
 
     AppointmentPojo getAppoinment(int id) {
