@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,6 +17,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.EdgeEffect;
 import android.widget.TextView;
@@ -23,6 +26,7 @@ import android.widget.Toast;
 import com.devsoftzz.doctorassist.ApiHelpers.APIClient;
 import com.devsoftzz.doctorassist.ApiHelpers.ApiInterface;
 import com.devsoftzz.doctorassist.Models.Place;
+import com.devsoftzz.doctorassist.Models.notesAdapter;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -54,6 +58,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,11 +68,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SearchActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class SearchActivity extends AppCompatActivity implements OnMapReadyCallback , notesAdapter.OnNoteListner , GoogleMap.OnMarkerClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private GoogleMap mMap;
-    LatLng current ;
+    LatLng current = new LatLng(19.114029,72.882952);
     private CameraPosition mCameraPosition;
     private GoogleApiClient mGoogleApiClient;
 
@@ -91,6 +96,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     private static final String KEY_LOCATION = "location";
     private String type;
     private ArrayList<Place.Result> data = new ArrayList<>();
+    private notesAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,6 +197,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                                         location.getLongitude()),20.0f));*/
                         current = new LatLng(location.getLatitude(),location.getLongitude());
                         ApiCall(current);
+
                         stopLocationUpdates();
                         break;
                     }
@@ -319,10 +326,10 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                         builder.include(latLng);
                     }
                     LatLngBounds bounds = builder.build();
-                    int padding = 0;
+                    int padding = 20;
                     CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
                     mMap.animateCamera(cu);
-
+                    botoomSheetUpdate();
 
                 } else {
                     Toast.makeText(SearchActivity.this, response.errorBody().toString(), Toast.LENGTH_SHORT).show();
@@ -340,4 +347,28 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
 
     }
 
+    private void botoomSheetUpdate() {
+        RecyclerView recyclerView = findViewById(R.id.r1);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        mAdapter = new notesAdapter(data , this);
+        recyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onNoteClick(int position, Place.Result note) {
+        Gson gson = new Gson();
+        String data = gson.toJson(note);
+        Intent intent = new Intent(SearchActivity.this,Hospital_Detailed.class);
+        intent.putExtra("Data",data);
+        intent.putExtra("Lat",String.valueOf(current.latitude));
+        intent.putExtra("Lng",String.valueOf(current.longitude));
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        return true;
+        //TODO
+    }
 }

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "208106272840",
+    "firebase_url": "https://doctor-assistant-e93b7.firebaseio.com",
+    "project_id": "doctor-assistant-e93b7",
+    "storage_bucket": "doctor-assistant-e93b7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:208106272840:android:ba111ede3f362b8870c07d",
+        "android_client_info": {
+          "package_name": "com.devsoftzz.doctorassist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "208106272840-0kqlvdem7k3180ue06f51rkig9p0a41h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.devsoftzz.doctorassist",
+            "certificate_hash": "4b93be68422ff97a3b142cbc1e975aa38aa35dd0"
+          }
+        },
+        {
+          "client_id": "208106272840-ur5b3nj33vhjr9vihl6ahomnre051gih.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqQ-DefpA8ahL5eEskncI-9VYyyC3Bf4g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "208106272840-ur5b3nj33vhjr9vihl6ahomnre051gih.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
