@@ -23,7 +23,7 @@ import java.util.HashMap;
 public class UserDetailsActivity extends AppCompatActivity {
 
 
-    EditText username,from,age,weight;
+    EditText username,age;
     Button register;
     FirebaseUser user;
     DatabaseReference ref,ref2;
@@ -35,9 +35,7 @@ public class UserDetailsActivity extends AppCompatActivity {
 
         username = findViewById(R.id.username);
         register = findViewById(R.id.register);
-        from = findViewById(R.id.from);
         age = findViewById(R.id.age);
-        weight = findViewById(R.id.weight);
 
 
          user = FirebaseAuth.getInstance().getCurrentUser();
@@ -51,10 +49,10 @@ public class UserDetailsActivity extends AppCompatActivity {
 
                  HashMap<String,Object> mapdata = new HashMap<>();
                  mapdata.put("id",user.getUid());
-                 mapdata.put("name",username.getText().toString());
-                 mapdata.put("from",from.getText().toString());
-                 mapdata.put("age",age.getText().toString());
-                 mapdata.put("weight",weight.getText().toString());
+                 mapdata.put("Name",username.getText().toString());
+                 mapdata.put("Age",age.getText().toString());
+                 mapdata.put("Phone Number",user.getPhoneNumber().toString());
+
                  ref.setValue(mapdata).addOnCompleteListener(new OnCompleteListener<Void>() {
                      @Override
                      public void onComplete(@NonNull Task<Void> task) {

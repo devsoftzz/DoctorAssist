@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -18,11 +19,19 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.devsoftzz.doctorassist.R;
 import com.devsoftzz.doctorassist.SearchActivity;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.rupins.drawercardbehaviour.CardDrawerLayout;
 
 import java.util.ArrayList;
@@ -31,8 +40,11 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener , AdapterView.OnItemSelectedListener{
 
     private CardDrawerLayout drawer;
+    TextView username;
+    FirebaseUser user;
     private Spinner spinner;
     private Button search;
+    private SharedPreferences pref;
     private String item;
     private Window window;
 
@@ -40,6 +52,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        username= findViewById(R.id.usernamemain);
+        user= FirebaseAuth.getInstance().getCurrentUser();
+        pref = getSharedPreferences("ROG",MODE_PRIVATE);
+
+        FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    String nnn= String.valueOf(dataSnapshot.child("Name").getValue());
+                    username.setText("Hello, "+nnn);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -102,6 +133,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, SearchActivity.class);
                 intent.putExtra("Type",item);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("Dicease",item);
+                editor.apply();
                 startActivity(intent);
             }
         });

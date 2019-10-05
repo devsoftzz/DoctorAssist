@@ -81,17 +81,21 @@ public class Hospital_Detailed extends AppCompatActivity implements NavigationVi
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Hospital_Detailed.this,SlotBooking.class);
+                intent.putExtra("HospitalId",result.getId());
+                intent.putExtra("HospitalName",result.getName());
                 startActivity(intent);
             }
         });
 
         mRat.setRating(result.getRating());
         Glide.with(getApplicationContext()).load(result.getIcon()).into(mLogo);
-        if(result.getPhotos().size()!=0){
+        try {
             Glide.with(getApplicationContext()).load("https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+result.getPhotos().get(0).getPhotoReference()+"&key=AIzaSyCHnirJxrTjyh0JYG9HZOe5RazRhtjYFl0").into(mImage);
         }
-        else {
-            mImage.setVisibility(View.GONE);
+        catch (Exception e)
+        {
+                mImage.setVisibility(View.GONE);
+                e.printStackTrace();
         }
 
         mNavigaton.setOnClickListener(new View.OnClickListener() {
