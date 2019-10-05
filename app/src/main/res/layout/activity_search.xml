@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="540dp"
         android:background="#FFBCAA"
-        app:behavior_hideable="true"
+        app:behavior_hideable="false"
         app:behavior_peekHeight="100dp"
         android:minHeight="64dp"
         android:layout_marginStart="16dp"

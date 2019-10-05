@@ -68,7 +68,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SearchActivity extends AppCompatActivity implements OnMapReadyCallback , notesAdapter.OnNoteListner , GoogleMap.OnMarkerClickListener {
+public class SearchActivity extends AppCompatActivity implements OnMapReadyCallback , notesAdapter.OnNoteListner {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private GoogleMap mMap;
@@ -286,9 +286,10 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     }
 
 
+
 /*--------------------------------------APi CALL-------------------------------------------------------------*/
 
-    void ApiCall(LatLng current)
+    void ApiCall(final LatLng current)
     {
         ApiInterface apiService = APIClient.getClient().create(ApiInterface.class);
         Call<Place> call = apiService.getPlaces(String.valueOf(current.latitude)+","+String.valueOf(current.longitude),"50000","hospital",type,"AIzaSyCHnirJxrTjyh0JYG9HZOe5RazRhtjYFl0");
@@ -320,15 +321,35 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                         LatLng latLng = new LatLng(lat,lng);
                         markerOptions.position(latLng);
                         markerOptions.title(placeName);
+
+
                         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                        mMap.addMarker(markerOptions);
+                        Marker marker = mMap.addMarker(markerOptions);
+                        marker.setTag(String.valueOf(i));
 
                         builder.include(latLng);
                     }
                     LatLngBounds bounds = builder.build();
-                    int padding = 20;
+                    final int padding = 20;
                     CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
                     mMap.animateCamera(cu);
+                    mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                        @Override
+                        public boolean onMarkerClick(Marker marker) {
+
+                            int position = Integer.valueOf(marker.getTag().toString());
+                            Gson gson = new Gson();
+                            Place.Result result = data.get(position);
+                            String data = gson.toJson(result);
+                            Intent intent = new Intent(SearchActivity.this,Hospital_Detailed.class);
+                            intent.putExtra("Data",data);
+                            intent.putExtra("Lat",String.valueOf(current.latitude));
+                            intent.putExtra("Lng",String.valueOf(current.longitude));
+                            startActivity(intent);
+                            return false;
+                        }
+                    });
+
                     botoomSheetUpdate();
 
                 } else {
@@ -366,9 +387,4 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         startActivity(intent);
     }
 
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        return true;
-        //TODO
-    }
 }
