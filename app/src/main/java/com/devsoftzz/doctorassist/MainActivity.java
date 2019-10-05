@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                     String nnn= String.valueOf(dataSnapshot.child("Name").getValue());
-                    username.setText("Hello, "+nnn);
+                    username.setText("Hello, "+ nnn);
 
             }
             @Override

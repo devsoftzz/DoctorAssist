@@ -66,7 +66,7 @@ public class SlotBooking extends AppCompatActivity implements View.OnClickListen
         date = findViewById(R.id.date);
         sharedPreferences = getSharedPreferences("ROG",MODE_PRIVATE);
         mAuth = FirebaseAuth.getInstance();
-        mdatabase = FirebaseDatabase.getInstance().getReference("Hospitals").child(HospitalId).child(sharedPreferences.getString("Dicease","Physiotherapist"));
+        mdatabase = FirebaseDatabase.getInstance().getReference("Hospitals").child(HospitalId);
 
         date.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,7 +87,7 @@ public class SlotBooking extends AppCompatActivity implements View.OnClickListen
                         }, mYear, mMonth, mDay);
 
 
-                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis()- (1000 * 60 * 60 * 24));
+                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis()/*- (1000 * 60 * 60 * 24)*/);
                 datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis()+ (1000 * 60 * 60 * 24 * 15));
                 datePickerDialog.show();
 
@@ -106,9 +106,21 @@ public class SlotBooking extends AppCompatActivity implements View.OnClickListen
 
 
     private void updateDate(int year, int monthOfYear, int dayOfMonth) {
-        date.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-        dt2=dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
-        datestring = dayOfMonth + "_" + (monthOfYear + 1) + "_" + year;
+
+        if(dayOfMonth/10 ==0)
+        {
+            date.setText("0"+dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+            dt2= "0"+dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
+            datestring = "0"+ dayOfMonth + "_" + (monthOfYear + 1) + "_" + year;
+        }
+        else
+        {
+            date.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+            dt2= dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
+            datestring = dayOfMonth + "_" + (monthOfYear + 1) + "_" + year;
+        }
+
+
     }
 
     @Override
