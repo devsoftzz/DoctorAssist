@@ -19,7 +19,6 @@ public class Adapter_Appoinment extends RecyclerView.Adapter<Adapter_Appoinment.
     private List<AppointmentPojo> data;
     Context context;
 
-
     public Adapter_Appoinment(List<AppointmentPojo> data, Context context){
         this.data = data;
         this.context = context;
@@ -30,26 +29,18 @@ public class Adapter_Appoinment extends RecyclerView.Adapter<Adapter_Appoinment.
     public progViewHolder onCreateViewHolder(@NonNull final ViewGroup viewGroup, int i) {
         LayoutInflater l1 = LayoutInflater.from(viewGroup.getContext());
         View view = l1.inflate(R.layout.appoinment_layout,viewGroup,false);
-
         return new progViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull progViewHolder progViewHolder, int i) {
-
                 progViewHolder.t1.setText(data.get(i).getHospital());
                 progViewHolder.t2.setText(data.get(i).getDate()+" | "+data.get(i).getTime());
-
     }
 
     @Override
     public int getItemCount() {
         return data.size();
-    }
-
-    public  void removeItem(int position) {
-        data.remove(position);
-        notifyItemRemoved(position);
     }
 
     public class progViewHolder extends RecyclerView.ViewHolder{

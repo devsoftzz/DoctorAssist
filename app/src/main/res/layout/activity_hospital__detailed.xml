@@ -9,7 +9,6 @@
     android:background="#ff6000"
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
-
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -64,7 +63,6 @@
                     android:drawablePadding="8dp"
                     android:maxLines="6"
                     android:padding="12dp"
-                    android:text="DAIICT \nHackathon \nHeadout \nprit \ndeven"
                     android:textColor="#000"
                     android:textSize="20sp" />
 
@@ -89,7 +87,6 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                          android:text="Rating" />
-
                 </LinearLayout>
 
                 <LinearLayout
@@ -145,11 +142,9 @@
                     android:maxHeight="350dp"
                     android:adjustViewBounds="true"
                     android:scaleType="fitCenter"
-                    android:src="@mipmap/ic_launcher"
                     app:layout_collapseMode="parallax"
                     android:layout_marginTop="55dp"
                     app:layout_collapseParallaxMultiplier="0.7" />
-
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
@@ -164,12 +159,11 @@
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start|center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
         android:background="#0000ff00"
         android:fitsSystemWindows="true"
-        app:itemTextColor="#000"
-        app:menu="@menu/activity_main_drawer" />
-
+        app:itemTextColor="#FFF"
+        app:menu="@menu/activity_main_drawer"/>
 </com.rupins.drawercardbehaviour.CardDrawerLayout>

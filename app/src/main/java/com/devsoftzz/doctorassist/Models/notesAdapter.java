@@ -48,12 +48,6 @@ public class notesAdapter extends RecyclerView.Adapter<notesAdapter.ViewHolder> 
         holder.mIcon.setText(note.getName().toUpperCase());
         holder.mIconBack.setCardBackgroundColor(mColours.get(position%mColourSize));
 
-        holder.mBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO
-            }
-        });
     }
 
     @Override
@@ -74,7 +68,6 @@ public class notesAdapter extends RecyclerView.Adapter<notesAdapter.ViewHolder> 
             mName = itemView.findViewById(R.id.name);
             mRating = itemView.findViewById(R.id.ratingText);
             mIcon = itemView.findViewById(R.id.iconText);
-            mBtn = itemView.findViewById(R.id.viewMore);
             mIconBack = itemView.findViewById(R.id.iconView);
             mLayout = itemView.findViewById(R.id.layout);
 

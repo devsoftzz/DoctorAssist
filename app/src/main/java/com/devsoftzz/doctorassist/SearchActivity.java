@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -74,22 +75,16 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     private GoogleMap mMap;
     LatLng current = new LatLng(19.114029,72.882952);
     private CameraPosition mCameraPosition;
-    private GoogleApiClient mGoogleApiClient;
-
-
     private GeoDataClient mGeoDataClient;
     private PlaceDetectionClient mPlaceDetectionClient;
 
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
-    private final LatLng mDefaultLocation = new LatLng(23.1881176,72.627997);
-    private static final int DEFAULT_ZOOM = 15;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean mLocationPermissionGranted;
 
     private Location mLastKnownLocation;
     LocationCallback locationCallback;
-
 
     private LocationRequest mLocationRequest;
     private static final String KEY_CAMERA_POSITION = "camera_position";
@@ -97,6 +92,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     private String type;
     private ArrayList<Place.Result> data = new ArrayList<>();
     private notesAdapter mAdapter;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,35 +102,19 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
             mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
         setContentView(R.layout.activity_search);
-
+        progressDialog = ProgressDialog.show(this,"Please Wait","Finding Hospitals",true,false);
         type = getIntent().getStringExtra("Type");
         mGeoDataClient = Places.getGeoDataClient(this, null);
         mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
-
-
     @Override
     public void onMapReady(final GoogleMap googleMap) {
-
         mMap = googleMap;
-
-        mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
-            @Override
-            public void onCameraIdle() {
-                CameraPosition latLng = googleMap.getCameraPosition();
-                double latitude = latLng.target.latitude;
-                double longitude = latLng.target.longitude;
-                Geocoder geocoder = new Geocoder(SearchActivity.this);
-            }
-        });
         getLocationPermission();
-
     }
-
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (mMap != null) {
@@ -143,29 +123,20 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
             super.onSaveInstanceState(outState);
         }
     }
-
-
     private void getLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
             locationEnable();
-
         } else {
             ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
     }
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[],
-                                           @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         mLocationPermissionGranted = false;
         switch (requestCode) {
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mLocationPermissionGranted = true;
@@ -174,8 +145,6 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
             }
         }
     }
-
-
     private void getDeviceLocation() {
 
         locationCallback = new LocationCallback() {
@@ -188,41 +157,29 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 for (Location location : locationResult.getLocations()) {
                     if(location!=null)
                     {
-                        /*mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                new LatLng(location.getLatitude(),
-                                        location.getLongitude()), 10));
-
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                                new LatLng(location.getLatitude(),
-                                        location.getLongitude()),20.0f));*/
                         current = new LatLng(location.getLatitude(),location.getLongitude());
+                        mMap.setMyLocationEnabled(true);
                         ApiCall(current);
-
                         stopLocationUpdates();
                         break;
                     }
                 }
             }};
-
         mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest,locationCallback, null );
     }
-
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         final LocationSettingsStates states = LocationSettingsStates.fromIntent(data);
-
         switch (requestCode) {
             case 101:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
-                        Toast.makeText(SearchActivity.this, states.isLocationPresent() + "", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(SearchActivity.this, states.isLocationPresent() + "", Toast.LENGTH_SHORT).show();
                         getDeviceLocation();
                         break;
                     case Activity.RESULT_CANCELED:
-                        Toast.makeText(SearchActivity.this, "Canceled", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(SearchActivity.this, "Canceled", Toast.LENGTH_SHORT).show();
                         break;
                     default:
                         break;
@@ -230,13 +187,9 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 break;
         }
     }
-
     private void stopLocationUpdates() {
         mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
     }
-
-
-
     public void locationEnable()
     {
         mLocationRequest = new LocationRequest();
@@ -246,9 +199,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
         builder.addLocationRequest(mLocationRequest);
-
         Task<LocationSettingsResponse> task=LocationServices.getSettingsClient(this).checkLocationSettings(builder.build());
-
         task.addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
             @Override
             public void onComplete(Task<LocationSettingsResponse> task) {
@@ -259,34 +210,20 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 } catch (ApiException exception) {
                     switch (exception.getStatusCode()) {
                         case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                            // Location settings are not satisfied. But could be fixed by showing the
-                            // user a dialog.
                             try {
-                                // Cast to a resolvable exception.
                                 ResolvableApiException resolvable = (ResolvableApiException) exception;
-                                // Show the dialog by calling startResolutionForResult(),
-                                // and check the result in onActivityResult().
                                 resolvable.startResolutionForResult(
-                                        SearchActivity.this,
-                                        101);
+                                        SearchActivity.this, 101);
                             } catch (IntentSender.SendIntentException e) {
-                                // Ignore the error.
-                            } catch (ClassCastException e) {
-                                // Ignore, should be an impossible error.
-                            }
+                            } catch (ClassCastException e) {}
                             break;
                         case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                            // Location settings are not satisfied. However, we have no way to fix the
-                            // settings so we won't show the dialog.
                             break;
                     }
                 }
             }
         });
     }
-
-
-
 /*--------------------------------------APi CALL-------------------------------------------------------------*/
 
     void ApiCall(final LatLng current)
@@ -308,20 +245,17 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                     }
 
                     LatLngBounds.Builder builder = new LatLngBounds.Builder();
-
+                    builder.include(current);
                     for(int i=0;i<data.size();i++){
                         MarkerOptions markerOptions = new MarkerOptions();
                         Place.Result result = data.get(i);
-
                         String placeName = result.getName();
-                        String vicinity = result.getVicinity();
                         double lat = result.getGeometry().getLocation().getLat();
                         double lng = result.getGeometry().getLocation().getLng();
 
                         LatLng latLng = new LatLng(lat,lng);
                         markerOptions.position(latLng);
                         markerOptions.title(placeName);
-
 
                         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                         Marker marker = mMap.addMarker(markerOptions);
@@ -330,7 +264,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                         builder.include(latLng);
                     }
                     LatLngBounds bounds = builder.build();
-                    final int padding = 20;
+                    final int padding = 100;
                     CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
                     mMap.animateCamera(cu);
                     mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -349,33 +283,25 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                             return false;
                         }
                     });
-
                     botoomSheetUpdate();
-
                 } else {
                     Toast.makeText(SearchActivity.this, response.errorBody().toString(), Toast.LENGTH_SHORT).show();
                 }
-
             }
-
             @Override
             public void onFailure(Call<Place> call, Throwable t) {
-
                 Toast.makeText(SearchActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-
         });
-
     }
-
     private void botoomSheetUpdate() {
         RecyclerView recyclerView = findViewById(R.id.r1);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         mAdapter = new notesAdapter(data , this);
         recyclerView.setAdapter(mAdapter);
+        progressDialog.dismiss();
     }
-
     @Override
     public void onNoteClick(int position, Place.Result note) {
         Gson gson = new Gson();
@@ -386,5 +312,4 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         intent.putExtra("Lng",String.valueOf(current.longitude));
         startActivity(intent);
     }
-
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FF5722">
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchReminder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:thumbTint="@color/colorPrimaryDark"
+        android:textColor="@android:color/white"/>
+</LinearLayout>

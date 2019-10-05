@@ -78,8 +78,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 appoinmentPojo.setDate(cursor.getString(2));
                 appoinmentPojo.setTime(cursor.getString(3));
 
-
-                Toast.makeText(cc,cursor.getString(3),Toast.LENGTH_LONG).show();
                 Date d2= sdf.parse(cursor.getString(2)+"|"+cursor.getString(3));
 
                    if(d2.before(new Date()))

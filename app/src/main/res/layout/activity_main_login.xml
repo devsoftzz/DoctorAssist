@@ -4,13 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorPrimaryTrans"
+    android:background="#2196F3"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="48dp">
-
-
-
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -31,12 +28,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/phone_number"
             android:hint="Phone Number"
-            android:inputType="numberDecimal"
+            android:inputType="number"
             android:textColor="#FFFFFF" />
     </com.google.android.material.textfield.TextInputLayout>
-
-
-
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:id="@+id/codeout"
@@ -49,7 +43,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/verification_code"
             android:hint="Enter Code"
-            android:inputType="textEmailAddress"
+            android:inputType="number"
             android:textColor="#FFFFFF" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -59,22 +53,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:background="@null"
+        android:background="@drawable/button_rnd_org"
         android:text="Send code"
+        android:textAllCaps="false"
         android:visibility="visible"
         android:textColor="#FFF"
         android:textSize="30sp" />
-
-
     <Button
         android:id="@+id/enter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:background="@null"
+        android:background="@drawable/button_rnd_org"
+        android:textAllCaps="false"
         android:text="Enter"
         android:visibility="gone"
         android:textColor="#FFF"
         android:textSize="30sp" />
-
 </LinearLayout>

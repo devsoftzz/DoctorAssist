@@ -55,13 +55,6 @@ public class MainLogin extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         firebaseUser = mAuth.getCurrentUser();
-        if(firebaseUser!=null)
-        {
-            Intent it = new Intent(MainLogin.this, MainActivity.class);
-            it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(it);
-            finish();
-        }
 
         ph_num = findViewById(R.id.phone_number);
         code_text = findViewById(R.id.verification_code);
@@ -69,8 +62,6 @@ public class MainLogin extends AppCompatActivity {
         sendcode =findViewById(R.id.sendcode);
         phoneout = findViewById(R.id.phoneout);
         codeout = findViewById(R.id.codeout);
-
-
 
         sendcode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,17 +72,18 @@ public class MainLogin extends AppCompatActivity {
                         ph_num.setError("Enter Phone Number");
                         ph_num.requestFocus();
                         return;
+                }else if(ph_num.getText().toString().length()!=10){
+                    ph_num.setError("Enter Phone Number Properly");
+                    ph_num.requestFocus();
+                    return;
                 }
                 sendVerificationCode("+91" + ph_num.getText().toString());
-
                 phoneout.setVisibility(View.GONE);
                 sendcode.setVisibility(View.GONE);
                 codeout.setVisibility(View.VISIBLE);
                 enter.setVisibility(View.VISIBLE);
             }
         });
-
-
 
         enter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,31 +92,24 @@ public class MainLogin extends AppCompatActivity {
                 String code = code_text.getText().toString().trim();
 
                 if (code.isEmpty() || code.length() < 6) {
-
-                    code_text.setError("Enter code...");
+                    code_text.setError("Enter Code Properly");
                     code_text.requestFocus();
                     return;
                 }
                 verifyCode(code);
             }
         });
-
     }
-
-
-
     private void verifyCode(String code) {
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
         signInWithCredential(credential);
     }
-
     private void signInWithCredential(final PhoneAuthCredential credential) {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-
                             final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                             final String userid = user.getUid();
                             final DatabaseReference ref  = FirebaseDatabase.getInstance().getReference("Users").child(userid);
@@ -133,56 +118,44 @@ public class MainLogin extends AppCompatActivity {
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     if(dataSnapshot.exists())
                                     {
-                                        Toast.makeText(MainLogin.this,"Exists",Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(MainLogin.this,"Welcome Again",Toast.LENGTH_SHORT).show();
                                         Intent intent = new Intent(MainLogin.this, MainActivity.class);
                                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity(intent);
                                     }
                                     else
                                     {
-
-
                                         Intent intent = new Intent(MainLogin.this, UserDetailsActivity.class);
                                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity(intent);
-
                                     }
                                 }
-
                                 @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                }
+                                public void onCancelled(@NonNull DatabaseError databaseError) {}
                             });
-
                         } else {
                             Toast.makeText(MainLogin.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
                     }
                 });
     }
-
-
     private void sendVerificationCode(String number) {
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 number,
-                15,
+                120,
                 TimeUnit.SECONDS,
                 TaskExecutors.MAIN_THREAD,
                 mCallBack
         );
-
     }
 
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks
             mCallBack = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-
         @Override
         public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
             super.onCodeSent(s, forceResendingToken);
             verificationId = s;
         }
-
         @Override
         public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
             String code = phoneAuthCredential.getSmsCode();
@@ -191,10 +164,9 @@ public class MainLogin extends AppCompatActivity {
                 verifyCode(code);
             }
         }
-
         @Override
         public void onVerificationFailed(FirebaseException e) {
-            Toast.makeText(MainLogin.this, "yyyyyyyyyyyyyyyyyyyy", Toast.LENGTH_LONG).show();
+            Toast.makeText(MainLogin.this, "Data Request Executed", Toast.LENGTH_LONG).show();
         }
     };
 

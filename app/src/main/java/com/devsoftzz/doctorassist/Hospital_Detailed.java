@@ -2,17 +2,26 @@ package com.devsoftzz.doctorassist;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
+import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -34,6 +43,8 @@ public class Hospital_Detailed extends AppCompatActivity implements NavigationVi
     private RatingBar mRat;
     private CircleImageView mLogo,mNavigaton;
     private ImageView mImage;
+    private Window window;
+    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,14 +54,23 @@ public class Hospital_Detailed extends AppCompatActivity implements NavigationVi
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
-
         setSupportActionBar(toolbar);
 
         drawer = findViewById(R.id.drawer_layout);
+        window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                window.setStatusBarColor(Color.rgb(33,150,243));
+            }
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                window.setStatusBarColor(Color.rgb(255,87,34));
+            }
+        };
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
@@ -58,6 +78,29 @@ public class Hospital_Detailed extends AppCompatActivity implements NavigationVi
         drawer.setViewScale(Gravity.START, 0.9f);
         drawer.setRadius(Gravity.START, 35);
         drawer.setViewElevation(Gravity.START, 20);
+
+        final SharedPreferences reminder = getSharedPreferences("Reminder",MODE_PRIVATE);
+        Menu menu = navigationView.getMenu();
+        SwitchCompat s=(SwitchCompat) MenuItemCompat.getActionView(menu.findItem(R.id.reminder)).findViewById(R.id.switchReminder);
+        if(reminder.getBoolean("Reminder",true)){
+            s.setChecked(true);
+        }else {
+            s.setChecked(false);
+        }
+        s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences.Editor editor = reminder.edit();
+                if(isChecked){
+                    editor.putBoolean("Reminder",true);
+                    delay();
+                }else {
+                    editor.putBoolean("Reminder",false);
+                    delay();
+                }
+                editor.commit();
+            }
+        });
 
         String data = getIntent().getStringExtra("Data");
         final Place.Result result = new Gson().fromJson(data, Place.Result.class);
@@ -109,13 +152,21 @@ public class Hospital_Detailed extends AppCompatActivity implements NavigationVi
     }
 
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        drawer.closeDrawer(GravityCompat.START);
+        int id = item.getItemId();
+
+        if (id == R.id.home) {
+            startActivity(new Intent(this,MainActivity.class));
+            delay();
+            finish();
+        } else if (id == R.id.appointment) {
+            startActivity(new Intent(this,AppointmentsActivity.class));
+            delay();
+            finish();
+        }
         return true;
     }
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -124,6 +175,14 @@ public class Hospital_Detailed extends AppCompatActivity implements NavigationVi
         } else {
             super.onBackPressed();
         }
+    }
+    public void delay(){
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                drawer.closeDrawer(GravityCompat.START);
+            }
+        },200);
     }
 }
 

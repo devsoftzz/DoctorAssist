@@ -13,7 +13,7 @@
         android:id="@+id/nav_view"
         android:background="#0000ff00"
         android:layout_width="wrap_content"
-        app:itemTextColor="#000"
+        app:itemTextColor="#FFFFFF"
         android:layout_height="match_parent"
         android:layout_gravity="start|center"
         android:fitsSystemWindows="true"

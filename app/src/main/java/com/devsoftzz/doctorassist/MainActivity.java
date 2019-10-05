@@ -3,14 +3,19 @@ package com.devsoftzz.doctorassist;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.core.view.GravityCompat;
+import androidx.core.view.MenuItemCompat;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -18,18 +23,16 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.devsoftzz.doctorassist.R;
-import com.devsoftzz.doctorassist.SearchActivity;
+import com.devsoftzz.doctorassist.LogIn.MainLogin;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rupins.drawercardbehaviour.CardDrawerLayout;
@@ -47,16 +50,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private SharedPreferences pref;
     private String item;
     private Window window;
+    private FirebaseAuth mAuth;
+    private FirebaseUser firebaseUser;
+    private CardView mUser;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mAuth = FirebaseAuth.getInstance();
+        firebaseUser = mAuth.getCurrentUser();
+        if(firebaseUser==null)
+        {
+            Intent it = new Intent(MainActivity.this, MainLogin.class);
+            it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(it);
+            finish();
+        }
+
         username= findViewById(R.id.usernamemain);
         user= FirebaseAuth.getInstance().getCurrentUser();
         pref = getSharedPreferences("ROG",MODE_PRIVATE);
+        mUser = findViewById(R.id.userdetails);
 
+        handler = new Handler();
+        mUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,UserDetailsActivity.class);
+                intent.putExtra("Home",true);
+                startActivity(intent);
+            }
+        });
+        username.setText("Hello,");
         FirebaseDatabase.getInstance().getReference("Users").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -65,12 +93,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     username.setText("Hello, "+nnn);
 
             }
-
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+            public void onCancelled(@NonNull DatabaseError databaseError) {}});
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -84,8 +108,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 super.onDrawerClosed(view);
                 window.setStatusBarColor(Color.rgb(33,150,243));
             }
-
-            /** Called when a drawer has settled in a completely open state. */
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 window.setStatusBarColor(Color.rgb(255,87,34));
@@ -94,18 +116,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
-
+        navigationView.getMenu().getItem(0).setChecked(true);
         drawer.setViewScale(Gravity.START, 0.9f);
         drawer.setRadius(Gravity.START, 35);
         drawer.setViewElevation(Gravity.START, 20);
-
-
         spinner = findViewById(R.id.spinner);
         search = findViewById(R.id.search);
-
         spinner.setOnItemSelectedListener(this);
 
-        // Spinner Drop down elements
+        final SharedPreferences reminder = getSharedPreferences("Reminder",MODE_PRIVATE);
+        Menu menu = navigationView.getMenu();
+        SwitchCompat s=(SwitchCompat) MenuItemCompat.getActionView(menu.findItem(R.id.reminder)).findViewById(R.id.switchReminder);
+        if(reminder.getBoolean("Reminder",true)){
+            s.setChecked(true);
+        }else {
+            s.setChecked(false);
+        }
+        s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences.Editor editor = reminder.edit();
+                if(isChecked){
+                    editor.putBoolean("Reminder",true);
+                    delay();
+                }else {
+                    editor.putBoolean("Reminder",false);
+                    delay();
+                }
+                editor.commit();
+            }
+        });
         List<String> categories = new ArrayList<String>();
         categories.add("Click To Choose");
         categories.add("Dentist");
@@ -117,17 +157,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         categories.add("Physiotherapist");
         categories.add("Ayurvedic Practioner");
         categories.add("Radiologist");
-        categories.add("Family Medicine Physician");
 
-        // Creating adapter for spinner
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
-
-        // Drop down layout style - list view with radio button
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // attaching data adapter to spinner
         spinner.setAdapter(dataAdapter);
-
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,17 +172,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intent);
             }
         });
-
-    }
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        drawer.closeDrawer(GravityCompat.START);
-
-        return true;
     }
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        // On selecting a spinner item
+
         if(position==0){
             search.setClickable(false);
             search.setBackgroundResource(R.drawable.button_disabled);
@@ -159,6 +185,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             item = parent.getItemAtPosition(position).toString();
         }
     }
-    public void onNothingSelected(AdapterView<?> arg0) {
+    public void onNothingSelected(AdapterView<?> arg0) {}
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.home) {
+            startActivity(new Intent(this,MainActivity.class));
+            delay();
+            finish();
+        } else if (id == R.id.appointment) {
+            startActivity(new Intent(this,AppointmentsActivity.class));
+            delay();
+            finish();
+        }
+        return true;
+    }
+    public void delay(){
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                drawer.closeDrawer(GravityCompat.START);
+            }
+        },200);
     }
 }

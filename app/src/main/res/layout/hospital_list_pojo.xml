@@ -26,8 +26,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_weight="90"
-        android:padding="6dp">
+        android:layout_weight="100"
+        android:padding="6dp"
+        android:gravity="center"
+        android:layout_gravity="center">
         <TextView
             android:id="@+id/name"
             android:layout_width="match_parent"
@@ -43,13 +45,4 @@
             android:text="4.5/5.0"
             android:drawableStart="@drawable/rating_ic"/>
     </LinearLayout>
-    <TextView
-        android:id="@+id/viewMore"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="View Details"
-        android:textSize="14sp"
-        android:layout_gravity="center"
-        android:layout_marginRight="-10dp"
-        android:textColor="@color/colorPrimaryDark"/>
 </LinearLayout>

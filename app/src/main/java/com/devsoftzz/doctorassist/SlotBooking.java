@@ -114,6 +114,10 @@ public class SlotBooking extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onClick(View v) {
 
+        if(date.getText().equals("Select Date")){
+            Toast.makeText(getApplicationContext(),"Select Date First",Toast.LENGTH_LONG).show();
+            return;
+        }
         switch (v.getId())
         {
             case R.id.slot1:
