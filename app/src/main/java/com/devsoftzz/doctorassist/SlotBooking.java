@@ -31,8 +31,7 @@ public class SlotBooking extends AppCompatActivity {
                 mDay = c.get(Calendar.DAY_OF_MONTH);
 
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(getApplicationContext(), new DatePickerDialog.OnDateSetListener() {
-
+                DatePickerDialog datePickerDialog = new DatePickerDialog(SlotBooking.this, new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year,
                                                   int monthOfYear, int dayOfMonth) {
@@ -45,6 +44,6 @@ public class SlotBooking extends AppCompatActivity {
     }
 
     private void updateDate(int year, int monthOfYear, int dayOfMonth) {
-        date.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+        date.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
     }
 }
