@@ -16,7 +16,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,7 +31,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.paytm.pgsdk.PaytmOrder;
 import com.paytm.pgsdk.PaytmPGService;
@@ -45,9 +43,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class SlotBooking extends AppCompatActivity implements View.OnClickListener, PaytmPaymentTransactionCallback {
 
@@ -177,14 +172,9 @@ public class SlotBooking extends AppCompatActivity implements View.OnClickListen
                     if (ContextCompat.checkSelfPermission(SlotBooking.this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
                         ActivityCompat.requestPermissions(SlotBooking.this, new String[]{Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS}, 101);
                     }
-
                     payment();
-
-
                 }
-
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -194,8 +184,8 @@ public class SlotBooking extends AppCompatActivity implements View.OnClickListen
 
     private void payment() {
         RandomString randomString = new RandomString();
-        ORDERID = randomString.getAlphaNumericString(16);
-        CUNSOMERID = randomString.getAlphaNumericString(16);
+        ORDERID = randomString.getAlphaNumericString(40);
+        CUNSOMERID = randomString.getAlphaNumericString(40);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         MID = "heGGTZ50771034143755";
@@ -221,7 +211,7 @@ public class SlotBooking extends AppCompatActivity implements View.OnClickListen
                     "MID="+MID+
                             "&ORDER_ID=" + ORDERID+
                             "&CUST_ID="+ CUNSOMERID+
-                            "&CHANNEL_ID=WAP&TXN_AMOUNT=500&WEBSITE=WEBSTAGING"+
+                            "&CHANNEL_ID=WAP&TXN_AMOUNT=100&WEBSITE=WEBSTAGING"+
                             "&CALLBACK_URL="+ varifyurl+"&INDUSTRY_TYPE_ID=Retail";
             JSONObject jsonObject = jsonParser.makeHttpRequest(url,"POST",param);
             // yaha per checksum ke saht order id or status receive hoga..
@@ -240,16 +230,8 @@ public class SlotBooking extends AppCompatActivity implements View.OnClickListen
         @Override
         protected void onPostExecute(String result) {
             Log.e(" setup acc ","  signup result  " + result);
-//            if (dialog.isShowing()) {
-//                dialog.dismiss();
-//            }
             PaytmPGService Service = PaytmPGService.getStagingService();
-            // when app is ready to publish use production service
-            // PaytmPGService  Service = PaytmPGService.getProductionService();
-            // now call paytm service here
-            //below parameter map is required to construct PaytmOrder object, Merchant should replace below map values with his own values
             HashMap<String, String> paramMap = new HashMap<String, String>();
-            //these are mandatory parameters
             paramMap.put("MID", MID); //MID provided by paytm
             paramMap.put("ORDER_ID", ORDERID);
             paramMap.put("CUST_ID", CUNSOMERID);
@@ -257,15 +239,11 @@ public class SlotBooking extends AppCompatActivity implements View.OnClickListen
             paramMap.put("TXN_AMOUNT", "100");
             paramMap.put("WEBSITE", "WEBSTAGING");
             paramMap.put("CALLBACK_URL" ,varifyurl);
-            //paramMap.put( "EMAIL" , "abc@gmail.com");   // no need
-            // paramMap.put( "MOBILE_NO" , "9144040888");  // no need
             paramMap.put("CHECKSUMHASH" ,CHECKSUMHASH);
-            //paramMap.put("PAYMENT_TYPE_ID" ,"CC");    // no need
             paramMap.put("INDUSTRY_TYPE_ID", "Retail");
             PaytmOrder Order = new PaytmOrder(paramMap);
             Log.e("checksum ", "param "+ paramMap.toString());
             Service.initialize(Order,null);
-            // start payment service call here
             Service.startPaymentTransaction(SlotBooking.this, true, true,SlotBooking.this);
         }
     }
