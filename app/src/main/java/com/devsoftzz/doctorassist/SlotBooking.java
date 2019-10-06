@@ -32,6 +32,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.paytm.pgsdk.PaytmOrder;
 import com.paytm.pgsdk.PaytmPGService;
@@ -44,6 +45,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class SlotBooking extends AppCompatActivity implements View.OnClickListener, PaytmPaymentTransactionCallback {
 
     private TextView date;
@@ -55,11 +60,11 @@ public class SlotBooking extends AppCompatActivity implements View.OnClickListen
     private SharedPreferences sharedPreferences;
     private String MID,ORDERID,CUNSOMERID;
     private String TIME;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slot_booking);
-
 
         String HospitalId = getIntent().getStringExtra("HospitalId");
         HospitalName = getIntent().getStringExtra("HospitalName");
@@ -67,6 +72,7 @@ public class SlotBooking extends AppCompatActivity implements View.OnClickListen
         sharedPreferences = getSharedPreferences("ROG",MODE_PRIVATE);
         mAuth = FirebaseAuth.getInstance();
         mdatabase = FirebaseDatabase.getInstance().getReference("Hospitals").child(HospitalId);
+
 
         date.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -215,7 +221,7 @@ public class SlotBooking extends AppCompatActivity implements View.OnClickListen
                     "MID="+MID+
                             "&ORDER_ID=" + ORDERID+
                             "&CUST_ID="+ CUNSOMERID+
-                            "&CHANNEL_ID=WAP&TXN_AMOUNT=100&WEBSITE=WEBSTAGING"+
+                            "&CHANNEL_ID=WAP&TXN_AMOUNT=500&WEBSITE=WEBSTAGING"+
                             "&CALLBACK_URL="+ varifyurl+"&INDUSTRY_TYPE_ID=Retail";
             JSONObject jsonObject = jsonParser.makeHttpRequest(url,"POST",param);
             // yaha per checksum ke saht order id or status receive hoga..
@@ -303,4 +309,5 @@ public class SlotBooking extends AppCompatActivity implements View.OnClickListen
     public void onTransactionCancel(String s, Bundle bundle) {
         Log.e("checksum ", "  transaction cancel " );
     }
+
 }
