@@ -20,10 +20,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "AppointmentManager.db";
     private static final String TABLE_APPOINMENT = "Appointments";
+    private static final String TABLE_NOTIFICATION = "Notification";
     private static final String KEY_ID = "id";
     private static final String KEY_NAME = "name";
     private static final String KEY_TIME = "time";
     private static final String KEY_DATE = "date";
+    private static final String KEY_MORNING = "a";
+    private static final String KEY_NOON = "b";
+    private static final String KEY_NIGHT = "c";
+    private static final String KEY_DAY = "day";
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy'|'HH_mm");
     Context cc;
 
@@ -39,6 +44,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT," + KEY_DATE + " TEXT,"
                 + KEY_TIME + " TEXT" + ")";
         db.execSQL(CREATE_APPOINMENT_TABLE);
+
+//        String CREATE_NOTIFICATION_TABLE = "CREATE TABLE " + TABLE_NOTIFICATION + "("
+//                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT," + KEY_DATE + " TEXT,"
+//                + KEY_TIME + " TEXT" + ")";
+//        db.execSQL(CREATE_APPOINMENT_TABLE);
 
     }
 
