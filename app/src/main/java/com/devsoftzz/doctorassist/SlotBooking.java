@@ -221,7 +221,7 @@ public class SlotBooking extends AppCompatActivity implements View.OnClickListen
                     "MID="+MID+
                             "&ORDER_ID=" + ORDERID+
                             "&CUST_ID="+ CUNSOMERID+
-                            "&CHANNEL_ID=WAP&TXN_AMOUNT=100&WEBSITE=WEBSTAGING"+
+                            "&CHANNEL_ID=WAP&TXN_AMOUNT=500&WEBSITE=WEBSTAGING"+
                             "&CALLBACK_URL="+ varifyurl+"&INDUSTRY_TYPE_ID=Retail";
             JSONObject jsonObject = jsonParser.makeHttpRequest(url,"POST",param);
             // yaha per checksum ke saht order id or status receive hoga..
